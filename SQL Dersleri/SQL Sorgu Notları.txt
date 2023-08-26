@@ -1,0 +1,111 @@
+SELECT 
+
+Select * From Customers 
+---> Hepsini getirir
+
+Select  contact_name, city, company_name from Customers 
+---> Sadece seçtiğimiz kolonları getirir
+
+Select contact_name Ad, city Sehir,  company_name Sirket_Ad from Customers 
+--->Seçtiğimiz kolonlar istediğimiz  isimle getirdik
+
+
+
+WHERE
+
+Select * From Customers Where City = 'London'
+--Belirli bir kolon'u filtrelemek için
+
+Select * From Products Where category_id = 1 or category_id = 3
+Select * from Products Where category_id = 1 and unit_price >= 10
+--Filtreye birden fazla element eklemek için
+
+
+
+Order By
+
+Select * from Products order by Product_name
+--İstediğimiz bir kolon'a göre sıralam yapmak
+
+Select * from products order by category_id,product_name
+--Önce istediğimiz bir kolona göre sıraladık. Daha sonra sıralanmış olan bu tabloyu da istediğimiz
+ikinci bir kolona göre kendi içinde tekrar sıralamış olduk
+
+
+asc -> ascending -> artan ve bu defaulttur yani order by yaparsak default olarak asc yapar
+desc -> descending ->azalandır
+
+Select * from products order by unit_price desc
+--bir kolonu azalan sıraya göre sıraladık
+
+
+
+Group By  --- Having
+
+Select count(*) from products
+--yazdığımız koşula uyan kaç veri var bunun sayısını döndürür
+
+--Group by kullanırken 2 tane şey yapabiliriz --> Karar Destek Sisteminde Kullanılır
+  --Ya select count(*) kullanırız
+  --Ya da hangi kolonu kullandıysak onu select edebiliriz
+
+Select category_id from products group by category_id
+--Bize kategorileri getirdi
+Select count(*) from products group by category_id
+--Bize kategorilerde kaç adet var onu getirdi
+Select category_id, count(*) from products group by category_id
+--Bize her bir kategorideki adet sayısını getirdi
+
+--Kendi örneğim
+Select product_name,category_id,count(*) from products group by product_name,category_id
+--Bize ürün ismini,kategorisini ve bu ürün ismi ile kategoride kaç adet var onu getirdi
+Select supplier_id,category_id,count(*) from products group by supplier_id,category_id
+-- Bu da supplier_id ve kategori için bir örnek
+
+--Where koşulunu kümülatif dataya yaparken (group by , count ) where yerine having  kullanılır
+Select category_id,count(*) Miktar from products group by category_id having count(*) < 10
+--Bu sorgu bize category_id'sinin miktarı 10 dan küçük olanları getirdi
+
+Select category_id,count(*) Miktar from products  Where unit_price > 20
+group by category_id having count(*) < 10
+--Önce where çalıştı , veri sayısı azaldı bu yüzden having ile çıkan sonuç daha fazla
+
+
+
+Inner Join  ---  Left Join
+
+Select 
+Products.product_id,Products.product_name, 
+Products.unit_price,Categories.category_name
+from Products inner join Categories
+on Products.category_id = Categories.category_id
+
+--Products ve Categories'den istediğimiz kolonları söyledik
+--Products inner join Categories --> Product tablosu ile Categories tablosunu birleştirdik
+--On kısmında da hangi field'lerin eşleştiğine göre birleştireceğimize karar verdik
+
+--Inner Join sadece iki tabloda da eşleşenleri bir araya getirir eşleşmeyen dataları getirmez
+--Left join ise sol tarafta olup sağda olmayanları getirir mesela 
+Select * from
+Products inner join Order_Details
+on Products.product_id = Order_Details.product_id
+--bu sorgu için Ürün listesinde olup siparişte olmayanları getirir
+
+Select * from 
+Customers c left join Orders o
+on c.customer_id = o.customer_id
+--Meslea burda da müşterilerde olup sipariş vermese de getirdik. 
+--Fakat inner join deseydik sadece sipariş verenler yani iki tabloda da ortak olanlar gelicekti
+
+
+
+Is Null
+
+Select * from
+Customers c left join orders o
+on c.customer_id = o.customer_id
+where o.customer_id is null
+
+--Left join ile solda olup sağda olmayanları da getirdik.
+--Sağda olmayanları ayırmak için de is null kullandık
+--Bu örneğe göre gelen veriler müşteri olup sipariş vermeyen müşterilerdir
